@@ -109,6 +109,10 @@ pub fn rococo_config() -> Result<PolkadotChainSpec, String> {
 	PolkadotChainSpec::from_json_bytes(&include_bytes!("../res/rococo.json")[..])
 }
 
+pub fn rococo_community_config() -> Result<PolkadotChainSpec, String> {
+	PolkadotChainSpec::from_json_bytes(&include_bytes!("../res/rococo-community.json")[..])
+}
+
 fn polkadot_session_keys(
 	babe: BabeId,
 	grandpa: GrandpaId,

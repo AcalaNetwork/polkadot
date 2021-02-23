@@ -89,6 +89,7 @@ impl SubstrateCli for Cli {
 			"rococo-staging" => Box::new(service::chain_spec::rococo_staging_testnet_config()?),
 			"rococo-local" => Box::new(service::chain_spec::rococo_local_testnet_config()?),
 			"rococo" => Box::new(service::chain_spec::rococo_config()?),
+			"rococo-community" => Box::new(service::chain_spec::rococo_community_config()?),
 			path => {
 				let path = std::path::PathBuf::from(path);
 
