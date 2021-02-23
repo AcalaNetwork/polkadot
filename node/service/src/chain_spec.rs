@@ -109,10 +109,6 @@ pub fn rococo_config() -> Result<PolkadotChainSpec, String> {
 	PolkadotChainSpec::from_json_bytes(&include_bytes!("../res/rococo.json")[..])
 }
 
-pub fn rococo_community_config() -> Result<PolkadotChainSpec, String> {
-	PolkadotChainSpec::from_json_bytes(&include_bytes!("../res/rococo-community.json")[..])
-}
-
 fn polkadot_session_keys(
 	babe: BabeId,
 	grandpa: GrandpaId,
@@ -1608,6 +1604,183 @@ pub fn rococo_local_testnet_config() -> Result<RococoChainSpec, String> {
 			session_length_in_blocks: Some(10),
 		},
 		vec![],
+		None,
+		Some(DEFAULT_PROTOCOL_ID),
+		None,
+		Default::default(),
+	))
+}
+
+fn rococo_community_genesis(wasm_binary: &[u8]) -> rococo_runtime::GenesisConfig {
+	// subkey inspect "$SECRET"
+	let endowed_accounts = vec![
+		// 5DoDN7y7AHn23Z4TsLMB5e6go4QDfUsnQ6deWdP7f2pUULPc
+		hex!["4ca7df5e59f69fd3e2df6e941f7d5c50303f9f9036d9925703a3d384bfa4016c"].into(),
+	];
+
+	// ./scripts/prepare-test-net.sh 3
+	let initial_authorities: Vec<(
+		AccountId,
+		AccountId,
+		BabeId,
+		GrandpaId,
+		ImOnlineId,
+		ValidatorId,
+		AssignmentId,
+		AuthorityDiscoveryId
+	)> = vec![(
+		//5EHjoBVGQm4CNbdoeaozpAKGp9TTrfRuADvQ65kyiABZhYPk
+		hex!["62692ff7965729b21a10862da513beb42b7da54f321e35e2147983e1e53dc935"].into(),
+		//5DSShm3qptXjE5aK7aUoVCQ7ScgCwt8wbH7MzgNwtRg4FPJZ
+		hex!["3cd09eecf6faa579ff49a5bb8175c02244da1151cfa75b8b3fc9dcb15b4b281d"].into(),
+		//5DRQRDWEabzp8BkYjDWRmzBiBqc6DyyPKDcuogXXXgR9cVfr
+		hex!["3c05aebeb9e9740fc49fba44d36958cfebaed238a15e5d215d20c3b858c58d16"].unchecked_into(),
+		//5G8WWBAq4gpFLEnQjsxPkfYRdXNs3UkaeR8QG39HVjub8agw
+		hex!["b3d7b25de30f345bfb40e0fb78f86acc36a7edc045615d5dee2cb9539faa8219"].unchecked_into(),
+		//5Fvbhw7qHqrUXfErS8afAzPvpnbEk6BCXxMzoFTYk5Lg2dmD
+		hex!["aac2440bfa090b89b151bd32e664cf3a77646040d58beeca4c66a8727d78fa4c"].unchecked_into(),
+		//5E7qHbkqsViJ1R5gY9ADA71J6qHf1SCLkSqjWpSAie26otEf
+		hex!["5adb36d761304b31aa8a225bdbb22b756bfe301f974abf80e2ab0268b7ef5842"].unchecked_into(),
+		//5DHw6EUPcBkcmJx1twvpTUyQwJxFhqLWLd1MrtdabqvT1bBW
+		hex!["3652f90eb39b85570671aef2d5fef9050c13f8feb9f0684949febe7627338068"].unchecked_into(),
+		//5G9TjyiM7fpVoVBQx6iYTzpxUyoFEtu5bBSac3Esjj8Dh6BM
+		hex!["b491a4f377891c48b05b3caaa8344612b4bbd0833be3074affd96eb3ccc8a71c"].unchecked_into(),
+		),
+		(
+		//5FsJoADMCmUQqmprSSqnyLPj7KAz7Kym6AzWbXMyEza7A5XH
+		hex!["a83f9b156daa23ac07dd3361514d1b9f1674904d35ce8ab422bc8e1e12dac70b"].into(),
+		//5GE6M2FBBChfGfatFvRmWSgJrvSuxVYB2HNA13Fb5EFMpjst
+		hex!["b819d8c01cbc46e23d9b79f7654f704a828fa1946bc8a97f56889daade1ced4e"].into(),
+		//5GxzB3oemXt3XskegqpVAMfCNQf1xxgSEwUz5tt97Xodg7fZ
+		hex!["d8d09f57c3ba6ab33c1ffda74aa70af40eade733d77c642a7159e2621c591203"].unchecked_into(),
+		//5EaM6zor3sPnqfYLM1CRu1RFPsyMkNa1B1r3J4itBSLs8mx8
+		hex!["6f13f7e727ef6b4094b346e351e66242b51fbbb6a2eac532b55389f1314d2d11"].unchecked_into(),
+		//5GbuPR9jeuLuzVyyXQ8i4UF22G7HTG9RMencHkqNPfQMgLix
+		hex!["c8bc5af37ae86784b073d2b88133cae60c268c31a1c2b108c92d3d16fc3a7d77"].unchecked_into(),
+		//5HSmZZmHPmkJvxETzfJph5RwYmLnqgRC49VwicCgu2raBPF1
+		hex!["ee0109e8a5ca0eb8970ad4e680e3d58f37fb36aa853a3b45c500392782e5507b"].unchecked_into(),
+		//5CicHPuqapt1GZxgJPeVM2g9rWh4T7o5VNJ8Zo2jrD9EoMwK
+		hex!["1ce8900e32afafaae694da8bf53856276cab7ba6d0c2c07a7a83ff6109bf1820"].unchecked_into(),
+		//5GpKeSKxv1KPPQd1UJw5ehKQ7PwG2opoZQkXfsQrW7HF22VP
+		hex!["d234f68df98ebdaae5574c8b1ac8862176856c16839f198942640d35d65a1067"].unchecked_into(),
+		),
+		(
+		//5EC9ZatAJNcG1zrbkuJJjwfe4k2Dbs3XmDvk4MBjKanw6tpL
+		hex!["5e25b78d7ef73fb03c48b5550c7762f2fffaff54ef6cac0d670157cf2ba18563"].into(),
+		//5CcwzmrQg71nAQX8XpFKXojxF7GUHY5C74c4HeXdxa5uVFxK
+		hex!["1897739a555a3ffc548045b2d3580510e9d30e4529d7b92bc35da4421200d160"].into(),
+		//5Cfr34yFa7ZXKpVJZUG9BrxUzoEGewM15rgmJUNTKAGdAqhR
+		hex!["1acd1f89ba95f376393668a0461f5a77fa872370ce79ec3eefdd543b88af5b11"].unchecked_into(),
+		//5FmbyAA9Qj34wGbKRUG6ECDHx7nNqeJe9jz3q1nJnaMDk25b
+		hex!["a3e5f0d91041642f5c82b75ba6ef5fbd429463797e66e813a816251a1a64e3ff"].unchecked_into(),
+		//5FUDFLosMyMhiV1cuD4JvxMPfhtTGDS9Ta8eA1whcDuLUA3u
+		hex!["96a248883659efafd966e84a71c8387ac05c0838b34469f5e10e00f9c5da4c26"].unchecked_into(),
+		//5H6KQSdzN4kRZ6yUaAqz8Zzk2g5HpEugQt2mUX1wvLWgxuDT
+		hex!["de6813cbdcdec884772e3c7f97ed4ca0aa64b0b567a627188320fc8135c75d72"].unchecked_into(),
+		//5E5Mbo4uXTPbnQmZUcD2wPGpTytfTafmfPhpH4uCeVW2DZi3
+		hex!["58f785e65925a8d61b00bb79ecd740f6895f6fdcfdf18cb491f05e4fa517f52c"].unchecked_into(),
+		//5HovSwBdwsHA7t9FUsgAVxWg76hDFYSEit4L8GBMe2V8cuc9
+		hex!["fe231aa35fde4e4210200c5b5dc63dab29fc35268428fc77472fa7c8c537f41d"].unchecked_into(),
+		)];
+
+	const ENDOWMENT: u128 = 1_000_000 * ROC;
+	const STASH: u128 = 100 * ROC;
+
+	rococo_runtime::GenesisConfig {
+		frame_system: Some(rococo_runtime::SystemConfig {
+			code: wasm_binary.to_vec(),
+			changes_trie_config: Default::default(),
+		}),
+		pallet_balances: Some(rococo_runtime::BalancesConfig {
+			balances: endowed_accounts.iter()
+				.map(|k: &AccountId| (k.clone(), ENDOWMENT))
+				.chain(initial_authorities.iter().map(|x| (x.0.clone(), STASH)))
+				.collect(),
+		}),
+		pallet_indices: Some(rococo_runtime::IndicesConfig {
+			indices: vec![],
+		}),
+		pallet_session: Some(rococo_runtime::SessionConfig {
+			keys: initial_authorities.iter().map(|x| (
+				x.0.clone(),
+				x.0.clone(),
+				rococo_session_keys(
+					x.2.clone(),
+					x.3.clone(),
+					x.4.clone(),
+					x.5.clone(),
+					x.6.clone(),
+					x.7.clone(),
+				),
+			)).collect::<Vec<_>>(),
+		}),
+		pallet_babe: Some(Default::default()),
+		pallet_grandpa: Some(Default::default()),
+		pallet_im_online: Some(Default::default()),
+		pallet_authority_discovery: Some(rococo_runtime::AuthorityDiscoveryConfig {
+			keys: vec![],
+		}),
+		pallet_sudo: Some(rococo_runtime::SudoConfig {
+			key: endowed_accounts[0].clone(),
+		}),
+		parachains_configuration: Some(rococo_runtime::ParachainsConfigurationConfig {
+			config: polkadot_runtime_parachains::configuration::HostConfiguration {
+				validation_upgrade_frequency: 600u32,
+				validation_upgrade_delay: 300,
+				acceptance_period: 1200,
+				max_code_size: 5 * 1024 * 1024,
+				max_pov_size: 50 * 1024 * 1024,
+				max_head_data_size: 32 * 1024,
+				group_rotation_frequency: 20,
+				chain_availability_period: 4,
+				thread_availability_period: 4,
+				max_upward_queue_count: 8,
+				max_upward_queue_size: 8 * 1024,
+				max_downward_message_size: 1024,
+				// this is approximatelly 4ms.
+				//
+				// Same as `4 * frame_support::weights::WEIGHT_PER_MILLIS`. We don't bother with
+				// an import since that's a made up number and should be replaced with a constant
+				// obtained by benchmarking anyway.
+				preferred_dispatchable_upward_messages_step_weight: 4 * 1_000_000_000,
+				max_upward_message_size: 1024,
+				max_upward_message_num_per_candidate: 5,
+				hrmp_open_request_ttl: 5,
+				hrmp_sender_deposit: 0,
+				hrmp_recipient_deposit: 0,
+				hrmp_channel_max_capacity: 8,
+				hrmp_channel_max_total_size: 8 * 1024,
+				hrmp_max_parachain_inbound_channels: 4,
+				hrmp_max_parathread_inbound_channels: 4,
+				hrmp_channel_max_message_size: 1024,
+				hrmp_max_parachain_outbound_channels: 4,
+				hrmp_max_parathread_outbound_channels: 4,
+				hrmp_max_message_num_per_candidate: 5,
+				no_show_slots: 2,
+				n_delay_tranches: 25,
+				needed_approvals: 2,
+				relay_vrf_modulo_samples: 10,
+				zeroth_delay_tranche_width: 0,
+				..Default::default()
+			},
+		}),
+	}
+}
+
+/// Rococo community testnet config.
+pub fn rococo_community_config() -> Result<RococoChainSpec, String> {
+	let wasm_binary = rococo::WASM_BINARY.ok_or("Rococo development wasm not available")?;
+	let boot_nodes = vec![];
+
+	Ok(RococoChainSpec::from_genesis(
+		"Rococo Community Testnet",
+		"rococo_community_testnet",
+		ChainType::Live,
+		move || RococoGenesisExt {
+			runtime_genesis_config: rococo_community_genesis(wasm_binary),
+			session_length_in_blocks: Some(10 * 20), // 20 minutes
+		},
+		boot_nodes,
 		None,
 		Some(DEFAULT_PROTOCOL_ID),
 		None,
