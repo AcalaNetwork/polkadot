@@ -143,6 +143,12 @@ fn set_default_ss58_version(spec: &Box<dyn service::ChainSpec>) {
 pub fn run() -> Result<()> {
 	let cli = Cli::from_args();
 
+	#[cfg(feature = "real-overseer")]
+	info!("real-overseer enabled");
+
+	#[cfg(not(feature = "real-overseer"))]
+	info!("!!!!! real-overseer disabled !!!!!");
+
 	match &cli.subcommand {
 		None => {
 			let runner = cli.create_runner(&cli.run.base)

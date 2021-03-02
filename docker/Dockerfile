@@ -6,7 +6,7 @@ WORKDIR /polkadot
 
 COPY . /polkadot
 
-RUN cargo build --$PROFILE
+RUN cargo build --$PROFILE --features=real-overseer
 
 # ===== SECOND STAGE ======
 
