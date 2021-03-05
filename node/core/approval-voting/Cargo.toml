@@ -21,21 +21,22 @@ polkadot-subsystem = { package = "polkadot-node-subsystem", path = "../../subsys
 polkadot-overseer = { path = "../../overseer" }
 polkadot-primitives = { path = "../../../primitives" }
 polkadot-node-primitives = { path = "../../primitives" }
+polkadot-node-jaeger = { path = "../../jaeger" }
 
-sc-client-api = { git = "https://github.com/paritytech/substrate", default-features = false , branch = "rococo-v1" }
-sc-keystore = { git = "https://github.com/paritytech/substrate", default-features = false , branch = "rococo-v1" }
-sp-consensus-slots = { git = "https://github.com/paritytech/substrate", default-features = false , branch = "rococo-v1" }
-sp-blockchain = { git = "https://github.com/paritytech/substrate", default-features = false , branch = "rococo-v1" }
-sp-application-crypto = { git = "https://github.com/paritytech/substrate", default-features = false, features = ["full_crypto"] , branch = "rococo-v1" }
-sp-runtime = { git = "https://github.com/paritytech/substrate", default-features = false , branch = "rococo-v1" }
+sc-client-api = { git = "https://github.com/paritytech/substrate", default-features = false , branch = "master" }
+sc-keystore = { git = "https://github.com/paritytech/substrate", default-features = false , branch = "master" }
+sp-consensus-slots = { git = "https://github.com/paritytech/substrate", default-features = false , branch = "master" }
+sp-blockchain = { git = "https://github.com/paritytech/substrate", default-features = false , branch = "master" }
+sp-application-crypto = { git = "https://github.com/paritytech/substrate", default-features = false, features = ["full_crypto"] , branch = "master" }
+sp-runtime = { git = "https://github.com/paritytech/substrate", default-features = false , branch = "master" }
 
 [dev-dependencies]
 parking_lot = "0.11.1"
 rand_core = "0.5.1" # should match schnorrkel
-sp-keyring = { git = "https://github.com/paritytech/substrate", branch = "rococo-v1" }
-sp-keystore = { git = "https://github.com/paritytech/substrate", branch = "rococo-v1" }
-sp-core = { git = "https://github.com/paritytech/substrate", branch = "rococo-v1" }
-sp-consensus-babe = { git = "https://github.com/paritytech/substrate", branch = "rococo-v1" }
+sp-keyring = { git = "https://github.com/paritytech/substrate", branch = "master" }
+sp-keystore = { git = "https://github.com/paritytech/substrate", branch = "master" }
+sp-core = { git = "https://github.com/paritytech/substrate", branch = "master" }
+sp-consensus-babe = { git = "https://github.com/paritytech/substrate", branch = "master" }
 maplit = "1.0.2"
 polkadot-node-subsystem-test-helpers = { path = "../../subsystem-test-helpers" }
 assert_matches = "1.4.0"
