@@ -42,7 +42,7 @@ use frame_support::{
 	parameter_types, construct_runtime, traits::{KeyOwnerProofSystem, Filter, EnsureOrigin}, weights::Weight,
 };
 use sp_runtime::{
-	create_runtime_str, generic, impl_opaque_keys,
+	create_runtime_str, generic, impl_opaque_keys, ModuleId,
 	ApplyExtrinsicResult, KeyTypeId, Perbill,
 	transaction_validity::{TransactionValidity, TransactionSource, TransactionPriority},
 	traits::{
@@ -61,7 +61,7 @@ use sp_core::OpaqueMetadata;
 use sp_staking::SessionIndex;
 use pallet_session::historical as session_historical;
 use frame_system::{EnsureRoot, EnsureOneOf, EnsureSigned};
-use runtime_common::{paras_sudo_wrapper, paras_registrar, xcm_sender};
+use runtime_common::{paras_sudo_wrapper, paras_registrar, xcm_sender, crowdloan, slots};
 
 use runtime_parachains::origin as parachains_origin;
 use runtime_parachains::configuration as parachains_configuration;
@@ -101,7 +101,7 @@ pub const VERSION: RuntimeVersion = RuntimeVersion {
 	spec_name: create_runtime_str!("rococo"),
 	impl_name: create_runtime_str!("parity-rococo-v1.1"),
 	authoring_version: 0,
-	spec_version: 212,
+	spec_version: 300,
 	impl_version: 0,
 	#[cfg(not(feature = "disable-runtime-api"))]
 	apis: RUNTIME_API_VERSIONS,
@@ -207,6 +207,9 @@ construct_runtime! {
 
 		// Propose parachain pallet.
 		ProposeParachain: propose_parachain::{Module, Call, Storage, Event<T>},
+
+		Crowdloan: crowdloan::{Module, Call, Storage, Event<T>},
+		Slots: slots::{Module, Call, Storage, Event<T>},
 	}
 }
 
@@ -629,6 +632,65 @@ impl propose_parachain::Config for Runtime {
 	type MaxNameLength = MaxNameLength;
 	type ProposeDeposit = ProposeDeposit;
 	type PriviledgedOrigin = EnsureOneOf<AccountId, EnsureRoot<AccountId>, PriviledgedOrigin>;
+}
+
+parameter_types! {
+	pub const SubmissionDeposit: Balance = 10 * DOLLARS;
+	pub const MinContribution: Balance = 1 * DOLLARS;
+	pub const RetirementPeriod: BlockNumber = 2 * DAYS;
+	pub const CrowdloanModuleId: ModuleId = ModuleId(*b"py/cfund");
+	pub const RemoveKeysLimit: u32 = 10;
+}
+
+impl crowdloan::Config for Runtime {
+	type Event = Event;
+	type SubmissionDeposit = SubmissionDeposit;
+	type MinContribution = MinContribution;
+	type RetirementPeriod = RetirementPeriod;
+	type OrphanedFunds = ();
+	type ModuleId = CrowdloanModuleId;
+	type RemoveKeysLimit = RemoveKeysLimit;
+}
+
+parameter_types!{
+	pub const LeasePeriod: BlockNumber = 7 * DAYS;
+	pub const EndingPeriod: BlockNumber = 2 * DAYS;
+}
+impl slots::Config for Runtime {
+	type Event = Event;
+	type Currency = Balances;
+	type Parachains = TestParachains;
+	type LeasePeriod = LeasePeriod;
+	type EndingPeriod = EndingPeriod;
+	type Randomness = Babe;
+}
+
+pub struct TestParachains;
+impl slots::Registrar<AccountId> for TestParachains {
+	fn new_id() -> ParaId {
+		Default::default()
+	}
+
+	fn head_data_size_allowed(head_data_size: u32) -> bool {
+		head_data_size <= 1000
+	}
+
+	fn code_size_allowed(code_size: u32) -> bool {
+		code_size <= 1000
+	}
+
+	fn register_para(
+		_id: ParaId,
+		_parachain: bool,
+		_code: ValidationCode,
+		_initial_head_data: primitives::v1::HeadData,
+	) -> sp_runtime::DispatchResult {
+		Ok(())
+	}
+
+	fn deregister_para(_id: ParaId) -> sp_runtime::DispatchResult {
+		Ok(())
+	}
 }
 
 #[cfg(not(feature = "disable-runtime-api"))]
