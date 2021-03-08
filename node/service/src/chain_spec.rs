@@ -1585,7 +1585,7 @@ fn rococo_local_testnet_genesis(wasm_binary: &[u8]) -> rococo_runtime::GenesisCo
 		wasm_binary,
 		vec![
 			get_authority_keys_from_seed("Alice"),
-			get_authority_keys_from_seed("Bob"),
+			// get_authority_keys_from_seed("Bob"),
 		],
 		get_account_id_from_seed::<sr25519::Public>("Alice"),
 		None,
