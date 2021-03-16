@@ -1718,3 +1718,37 @@ pub fn rococo_local_testnet_config() -> Result<RococoChainSpec, String> {
 		Default::default(),
 	))
 }
+
+fn rococo_community_testnet_genesis(wasm_binary: &[u8]) -> rococo_runtime::GenesisConfig {
+	rococo_testnet_genesis(
+		wasm_binary,
+		vec![
+			get_authority_keys_from_seed("Alice"),
+			get_authority_keys_from_seed("Bob"),
+		],
+		hex!["4ca7df5e59f69fd3e2df6e941f7d5c50303f9f9036d9925703a3d384bfa4016c"].into(),
+		None,
+	)
+}
+
+/// Rococo community testnet config (multivalidator Alice + Bob)
+/// -- maintained by Acala
+pub fn rococo_community_testnet_config() -> Result<RococoChainSpec, String> {
+	let wasm_binary = rococo::WASM_BINARY.ok_or("Rococo development wasm not available")?;
+
+	Ok(RococoChainSpec::from_genesis(
+		"Rococo Community Testnet",
+		"rococo_community_testnet",
+		ChainType::Local,
+		move || RococoGenesisExt {
+			runtime_genesis_config: rococo_community_testnet_genesis(wasm_binary),
+			// Use 1 minute session length.
+			session_length_in_blocks: Some(50),
+		},
+		vec![],
+		None,
+		Some(DEFAULT_PROTOCOL_ID),
+		None,
+		Default::default(),
+	))
+}
